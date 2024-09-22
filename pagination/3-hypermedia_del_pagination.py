@@ -58,8 +58,12 @@ class Server:
             page_data.append(indexed_data[current_index])
             current_index += 1
 
-        next_index = current_index if len(page_data) == page_size and
-        current_index < total_items else None
+        next_index = current_index 
+        if len(page_data) == page_size and current_index < total_items:
+            next_index = current_index
+        
+        else:
+            next_index = None
         return {
             "index": index,
             "next_index": next_index,
