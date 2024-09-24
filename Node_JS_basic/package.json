@@ -4,7 +4,7 @@
   "description": "NodeJS Basics Resources Read or watch:",
   "main": "index.js",
   "scripts": {
-    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "lint": "eslint .",
     "check-lint": "lint [0-9]*.js",
     "test": "./node_modules/mocha/bin/mocha --require babel-register --exit",
     "dev": "nodemon --exec babel-node --presets babel-preset-env ./server.js ./database.csv"
@@ -22,7 +22,7 @@
     "babel-cli": "^6.26.0",
     "babel-preset-env": "^1.7.0",
     "chai": "^4.4.1",
-    "eslint": "^9.11.0",
+    "eslint": "^9.11.1",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.30.0",
     "eslint-plugin-jest": "^28.8.3",
