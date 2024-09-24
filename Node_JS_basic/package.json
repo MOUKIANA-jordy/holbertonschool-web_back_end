@@ -4,7 +4,7 @@
   "description": "NodeJS Basics Resources Read or watch:",
   "main": "index.js",
   "scripts": {
-    "lint": "eslint",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "check-lint": "lint [0-9]*.js",
     "test": "./node_modules/mocha/bin/mocha --require babel-register --exit",
     "dev": "nodemon --exec babel-node --presets babel-preset-env ./server.js ./database.csv"
