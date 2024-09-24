@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "NodeJS Basics Resources Read or watch:",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "lint": "eslint .",
     "check-lint": "lint [0-9]*.js",
