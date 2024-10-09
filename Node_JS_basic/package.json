@@ -16,7 +16,7 @@
     "express": "^4.17.1"
   },
   "devDependencies": {
-    "@eslint/js": "^9.11.0",
+    "@eslint/js": "^8.57.1",
     "@typescript-eslint/eslint-plugin": "^8.6.0",
     "@typescript-eslint/parser": "^8.6.0",
     "babel-cli": "^6.26.0",
@@ -24,11 +24,12 @@
     "chai": "^4.4.1",
     "eslint": "^8.57.1",
     "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-plugin-import": "^2.30.0",
-    "eslint-plugin-jest": "^28.8.3",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-jest": "^27.2.1",
     "eslint-plugin-react": "^7.36.1",
     "globals": "^15.9.0",
     "lint": "*",
+    "mkdirp": "^3.0.1",
     "mocha": "^6.2.3",
     "nodemon": "^2.0.22",
     "request": "^2.88.2",
