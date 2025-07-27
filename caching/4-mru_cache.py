@@ -37,8 +37,11 @@ class MRUCache(BaseCaching):
             self.mru_key = key
             return self.cache_data[key]
         return None#!/usr/bin/python3
-""" MRUCache module
-"""
+
+        """ MRUCache module
+        """
+
+
 BaseCaching = __import__('base_caching').BaseCaching
 
 
@@ -50,7 +53,7 @@ class MRUCache(BaseCaching):
         """ Initiliaze
         """
         super().__init__()
-        self.mru_key = None
+      if self.mru_key = None
 
     def put(self, key, item):
         """ Assign to the self.cache_data the item value for the key.
