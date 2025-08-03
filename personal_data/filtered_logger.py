@@ -35,4 +35,3 @@ class RedactingFormatter(logging.Formatter):
             super().format(record),
             self.SEPARATOR
         )
-
