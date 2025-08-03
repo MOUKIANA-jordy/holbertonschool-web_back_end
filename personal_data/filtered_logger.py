@@ -1,4 +1,5 @@
 #!/usr/bin/env python3#!/usr/bin/env python3
+"""Module for filtering and redacting sensitive log information."""
 import re
 import logging
 from typing import List
