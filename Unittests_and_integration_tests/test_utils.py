@@ -4,6 +4,7 @@ from unittest.mock import patch, Mock
 from parameterized import parameterized
 import utils
 
+
 class TestAccessNestedMap(unittest.TestCase):
     @parameterized.expand([
         ({"a": 1}, ("a",), 1),
@@ -12,6 +13,7 @@ class TestAccessNestedMap(unittest.TestCase):
     ])
     def test_access_nested_map(self, nested_map, path, expected):
         self.assertEqual(utils.access_nested_map(nested_map, path), expected)
+
 
     @parameterized.expand([
         ({}, ("a",), "a"),
@@ -50,7 +52,9 @@ class TestMemoize(unittest.TestCase):
             def a_property(self):
                 return self.a_method()
 
-        with patch.object(TestClass, "a_method", return_value=42) as mock_method:
+        with patch.object(
+            TestClass, "a_method", return_value=42
+        ) as mock_method:
             obj = TestClass()
             self.assertEqual(obj.a_property, 42)
             self.assertEqual(obj.a_property, 42)
@@ -59,3 +63,4 @@ class TestMemoize(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
