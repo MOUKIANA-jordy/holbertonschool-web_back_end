@@ -1,58 +1,59 @@
 #!/usr/bin/env python3
-"""Un client d'organisation GitHub
+"""A github org client
 """
-en tapant import (
-    Liste,
+from typing import (
+    List,
     Dict,
 )
 
-à partir de l'importation d'utilitaires (
-    obtenir_json,
+from utils import (
+    get_json,
     access_nested_map,
-    mémoriser,
+    memoize,
 )
 
 
-classe GithubOrgClient :
-    """Un client d'organisation Githib
+class GithubOrgClient:
+    """A Githib org client
     """
     ORG_URL = "https://api.github.com/orgs/{org}"
 
-    def __init__(self, org_name: str) -> Aucun:
-        Méthode d'initialisation de GithubOrgClient
-        self._org_name = nom_organisation
+    def __init__(self, org_name: str) -> None:
+        """Init method of GithubOrgClient"""
+        self._org_name = org_name
 
     @memoize
     def org(self) -> Dict:
         """Memoize org"""
-        retourner get_json(self.ORG_URL.format(org=self._org_name))
+        return get_json(self.ORG_URL.format(org=self._org_name))
 
-    @propriété
+    @property
     def _public_repos_url(self) -> str:
-        """URL des dépôts publics"""
-        retour self.org["repos_url"]
+        """Public repos URL"""
+        return self.org["repos_url"]
 
     @memoize
     def repos_payload(self) -> Dict:
-        « Charge utile des dépôts Memoize »
-        retourner get_json(self._public_repos_url)
+        """Memoize repos payload"""
+        return get_json(self._public_repos_url)
 
-    def public_repos(self, license: str = None) -> Liste[str]:
-        """Dépôts publics"""
+    def public_repos(self, license: str = None) -> List[str]:
+        """Public repos"""
         json_payload = self.repos_payload
         public_repos = [
-            repo["name"] pour repo dans json_payload
-            si la licence est None ou self.has_license(repo, license)
+            repo["name"] for repo in json_payload
+            if license is None or self.has_license(repo, license)
         ]
 
-        renvoyer public_repos
+        return public_repos
 
     @staticmethod
     def has_license(repo: Dict[str, Dict], license_key: str) -> bool:
-        """Statique : has_license"""
-        assert license_key n'est pas None, "license_key ne peut pas être None"
-        essayer:
-            has_license = access_nested_map(repo, ("license", "key")) == license_key
-        sauf KeyError :
-            renvoie Faux
-        retourner has_license
+        """Static: has_license"""
+        assert license_key is not None, "license_key cannot be None"
+        try:
+            has_license = access_nested_map(
+                repo, ("license", "key")) == license_key
+        except KeyError:
+            return False
+        return has_license
