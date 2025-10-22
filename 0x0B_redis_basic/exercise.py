@@ -1,20 +1,35 @@
 #!/usr/bin/env python3
 """
-Exercise: Reading from Redis and recovering original type
+Exercise: Incrementing values with Redis
 """
 from typing import Callable, Optional, Union
 import redis
 import uuid
+from functools import wraps
+
+
+def count_calls(method: Callable) -> Callable:
+    """
+    Decorator that counts how many times a method is called.
+    Stores the count in Redis using method.__qualname__ as the key.
+    """
+    @wraps(method)
+    def wrapper(self, *args, **kwargs):
+        key = method.__qualname__
+        self._redis.incr(key)  # Increment the counter in Redis
+        return method(self, *args, **kwargs)
+    return wrapper
 
 
 class Cache:
     """Cache class to store and retrieve data in Redis"""
-    
+
     def __init__(self):
         """Initialize Redis client and flush the database"""
         self._redis = redis.Redis()
         self._redis.flushdb()
 
+    @count_calls
     def store(self, data: Union[str, bytes, int]) -> str:
         """
         Store a value in Redis and return a generated key.
@@ -48,19 +63,14 @@ class Cache:
         return self.get(key, fn=int)
 
 
-# Example usage with the test cases
+# Example usage for verification
 if __name__ == "__main__":
     cache = Cache()
 
-    TEST_CASES = {
-        b"foo": None,
-        123: int,
-        "bar": lambda d: d.decode("utf-8")
-    }
+    # Call store multiple times
+    cache.store(b"first")
+    print(cache.get(cache.store.__qualname__))  # Should print b'1'
 
-    for value, fn in TEST_CASES.items():
-        key = cache.store(value)
-        assert cache.get(key, fn=fn) == value
-
-    print("All test cases passed")
-
+    cache.store(b"second")
+    cache.store(b"third")
+    print(cache.get(cache.store.__qualname__))  # Should print b'3'
