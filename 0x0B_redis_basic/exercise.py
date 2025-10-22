@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Exercise: Incrementing values with Redis
+Exercise: Storing lists with call history in Redis
 """
 from typing import Callable, Optional, Union
 import redis
@@ -16,8 +16,30 @@ def count_calls(method: Callable) -> Callable:
     @wraps(method)
     def wrapper(self, *args, **kwargs):
         key = method.__qualname__
-        self._redis.incr(key)  # Increment the counter in Redis
+        self._redis.incr(key)
         return method(self, *args, **kwargs)
+    return wrapper
+
+
+def call_history(method: Callable) -> Callable:
+    """
+    Decorator that stores the history of inputs and outputs for a function.
+    """
+    @wraps(method)
+    def wrapper(self, *args, **kwargs):
+        inputs_key = f"{method.__qualname__}:inputs"
+        outputs_key = f"{method.__qualname__}:outputs"
+
+        # Store input arguments
+        self._redis.rpush(inputs_key, str(args))
+
+        # Call the original function
+        result = method(self, *args, **kwargs)
+
+        # Store output
+        self._redis.rpush(outputs_key, result)
+        return result
+
     return wrapper
 
 
@@ -30,6 +52,7 @@ class Cache:
         self._redis.flushdb()
 
     @count_calls
+    @call_history
     def store(self, data: Union[str, bytes, int]) -> str:
         """
         Store a value in Redis and return a generated key.
@@ -51,15 +74,11 @@ class Cache:
         return value
 
     def get_str(self, key: str) -> Optional[str]:
-        """
-        Retrieve a value and convert it to string.
-        """
+        """Retrieve a value and convert it to string"""
         return self.get(key, fn=lambda d: d.decode("utf-8"))
 
     def get_int(self, key: str) -> Optional[int]:
-        """
-        Retrieve a value and convert it to int.
-        """
+        """Retrieve a value and convert it to int"""
         return self.get(key, fn=int)
 
 
@@ -67,10 +86,13 @@ class Cache:
 if __name__ == "__main__":
     cache = Cache()
 
-    # Call store multiple times
-    cache.store(b"first")
-    print(cache.get(cache.store.__qualname__))  # Should print b'1'
+    s1 = cache.store("first")
+    s2 = cache.store("secont")
+    s3 = cache.store("third")
 
-    cache.store(b"second")
-    cache.store(b"third")
-    print(cache.get(cache.store.__qualname__))  # Should print b'3'
+    inputs = cache._redis.lrange(f"{cache.store.__qualname__}:inputs", 0, -1)
+    outputs = cache._redis.lrange(f"{cache.store.__qualname__}:outputs", 0, -1)
+
+    print("inputs:", inputs)
+    print("outputs:", outputs)
+
