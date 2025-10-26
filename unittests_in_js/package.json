@@ -1,14 +1,15 @@
 {
   "name": "task_0",
   "version": "1.0.0",
-  "description": "Basic test with Mocha and assert",
-  "main": "0-calcul.js",
+  "description": "Basic test with Mocha and chai",
+  "main": "2-calcul_chai.js",
   "scripts": {
     "test": "mocha"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "chai": "^4.5.0",
     "mocha": "^10.8.2"
   }
 }
