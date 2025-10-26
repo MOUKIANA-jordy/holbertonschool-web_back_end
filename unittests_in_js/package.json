@@ -1,0 +1,14 @@
+{
+  "name": "task_0",
+  "version": "1.0.0",
+  "description": "Basic test with Mocha and assert",
+  "main": "0-calcul.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "mocha": "^10.8.2"
+  }
+}
