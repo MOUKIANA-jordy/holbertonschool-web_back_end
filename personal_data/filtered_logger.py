@@ -85,8 +85,10 @@ def main():
     logger = get_logger()
 
     for row in cursor:
-        record = "; ".join(f"{field}={value}" for field, value in zip(fields, row)) + ";"
-        logger.info(record)
+        record = "; ".join(
+    f"{field}={value}"
+    for field, value in zip(fields, row)
+) + ";"
 
     cursor.close()
     db.close()
@@ -126,4 +128,4 @@ class RedactingFormatter(logging.Formatter):
             self.REDACTION,
             message,
             self.SEPARATOR
-        )
+            )
