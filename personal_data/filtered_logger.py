@@ -86,9 +86,9 @@ def main():
 
     for row in cursor:
         record = "; ".join(
-    f"{field}={value}"
-    for field, value in zip(fields, row)
-) + ";"
+            f"{field}={value}"
+            for field, value in zip(fields, row)
+        ) + ";"
 
     cursor.close()
     db.close()
