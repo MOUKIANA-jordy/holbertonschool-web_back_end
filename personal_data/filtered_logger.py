@@ -100,8 +100,11 @@ def filter_datum(fields: List[str], redaction: str,
                  message: str, separator: str) -> str:
     """Remplace les valeurs des champs sensibles par la redaction"""
     for field in fields:
-        message = re.sub(f"{field}=.*?{separator}",
-                         f"{field}={redaction}{separator}", message)
+        message = re.sub(
+            f"{field}=.*?{separator}",
+            f"{field}={redaction}{separator}",
+            message
+        )
     return message
 
 
@@ -118,5 +121,9 @@ class RedactingFormatter(logging.Formatter):
 
     def format(self, record: logging.LogRecord) -> str:
         message = super().format(record)
-        return filter_datum(self.fields, self.REDACTION,
-                            message, self.SEPARATOR)
+        return filter_datum(
+            self.fields,
+            self.REDACTION,
+            message,
+            self.SEPARATOR
+        )
