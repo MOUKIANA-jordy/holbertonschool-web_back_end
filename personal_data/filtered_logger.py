@@ -64,6 +64,7 @@ def get_logger() -> logging.Logger:
     return logger
 
 
+
 def get_db() -> mysql.connector.connection.MySQLConnection:
     """Return a connection to the database"""
     db_username = os.getenv('PERSONAL_DATA_DB_USERNAME', 'root')
@@ -77,6 +78,7 @@ def get_db() -> mysql.connector.connection.MySQLConnection:
         host=db_host,
         database=db_name
     )
+
 
 
 def main():
@@ -100,20 +102,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-def get_logger() -> logging.Logger:
-    """Return a configured logger"""
-    logger = logging.getLogger("user_data")
-    logger.setLevel(logging.INFO)
-
-    # empêcher la propagation
-    logger.propagate = False
-
-    # handler + formatter
-    stream_handler = logging.StreamHandler()
-    formatter = RedactingFormatter(PII_FIELDS)
-    stream_handler.setFormatter(formatter)
-
-    logger.addHandler(stream_handler)
-
-    return logger
