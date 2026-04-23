@@ -100,3 +100,13 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+
+def get_db() -> mysql.connector.connection.MySQLConnection:
+    """Return a connection to the database"""
+    return mysql.connector.connect(
+        user=os.getenv('PERSONAL_DATA_DB_USERNAME', 'root'),
+        password=os.getenv('PERSONAL_DATA_DB_PASSWORD', ''),
+        host=os.getenv('PERSONAL_DATA_DB_HOST', 'localhost'),
+        database=os.getenv('PERSONAL_DATA_DB_NAME')
+    )
