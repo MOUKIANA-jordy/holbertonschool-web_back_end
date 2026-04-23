@@ -7,32 +7,25 @@ from api.v1.views import app_views
 
 @app_views.route('/status', methods=['GET'], strict_slashes=False)
 def status() -> str:
-    """ GET /api/v1/status
-    Return:
-      - the status of the API
-    """
+    """Return API status"""
     return jsonify({"status": "OK"})
 
 
 @app_views.route('/stats/', strict_slashes=False)
 def stats() -> str:
-    """ GET /api/v1/stats
-    Return:
-      - the number of each objects
-    """
+    """Return stats"""
     from models.user import User
-    stats = {}
-    stats['users'] = User.count()
+    stats = {'users': User.count()}
     return jsonify(stats)
 
 
 @app_views.route('/unauthorized', methods=['GET'], strict_slashes=False)
 def unauthorized_route():
-    """Endpoint to trigger 401 Unauthorized error"""
+    """Trigger 401"""
     abort(401)
 
 
 @app_views.route('/forbidden', methods=['GET'], strict_slashes=False)
 def forbidden_route():
-    """Endpoint to trigger 403 Forbidden error"""
+    """Trigger 403"""
     abort(403)
