@@ -2,7 +2,6 @@
 """Auth module for managing API authentication"""
 
 from typing import List, TypeVar
-from flask import request
 
 
 class Auth:
@@ -13,7 +12,6 @@ class Auth:
         if path is None or excluded_paths is None or len(excluded_paths) == 0:
             return True
 
-        # rendre path slash tolerant
         if not path.endswith('/'):
             path += '/'
 
@@ -24,11 +22,10 @@ class Auth:
         return True
 
     def authorization_header(self, request=None) -> str:
-    """Return the authorization header"""
-    if request is None:
-        return None
-
-    return request.headers.get("Authorization")
+        """Return the authorization header"""
+        if request is None:
+            return None
+        return request.headers.get("Authorization")
 
     def current_user(self, request=None) -> TypeVar('User'):
         """Return the current user"""
