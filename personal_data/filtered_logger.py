@@ -64,7 +64,6 @@ def get_logger() -> logging.Logger:
     return logger
 
 
-
 def get_db() -> mysql.connector.connection.MySQLConnection:
     """Return a connection to the database"""
     db_username = os.getenv('PERSONAL_DATA_DB_USERNAME', 'root')
@@ -78,7 +77,6 @@ def get_db() -> mysql.connector.connection.MySQLConnection:
         host=db_host,
         database=db_name
     )
-
 
 
 def main():
