@@ -17,6 +17,11 @@ auth = None
 if getenv("AUTH_TYPE") == "basic_auth":
     from api.v1.auth.basic_auth import BasicAuth
     auth = BasicAuth()
+
+elif getenv("AUTH_TYPE") == "session_auth":
+    from api.v1.auth.session_auth import SessionAuth
+    auth = SessionAuth()
+
 elif getenv("AUTH_TYPE") == "auth":
     from api.v1.auth.auth import Auth
     auth = Auth()
@@ -56,13 +61,15 @@ def before_request():
     if not auth.require_auth(request.path, excluded_paths):
         return
 
-    # NOUVELLE LOGIQUE ICI
+    # Vérifie header OU cookie
     if (auth.authorization_header(request) is None and
             auth.session_cookie(request) is None):
         abort(401)
 
+    # Récupérer user
     request.current_user = auth.current_user(request)
 
+    # User invalide
     if request.current_user is None:
         abort(403)
 
