@@ -100,3 +100,20 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+def get_logger() -> logging.Logger:
+    """Return a configured logger"""
+    logger = logging.getLogger("user_data")
+    logger.setLevel(logging.INFO)
+
+    # empêcher la propagation
+    logger.propagate = False
+
+    # handler + formatter
+    stream_handler = logging.StreamHandler()
+    formatter = RedactingFormatter(PII_FIELDS)
+    stream_handler.setFormatter(formatter)
+
+    logger.addHandler(stream_handler)
+
+    return logger
