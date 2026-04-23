@@ -66,6 +66,13 @@ def before_request():
     if request.current_user is None:
         abort(403)
 
+def session_cookie(self, request=None):
+    if request is None:
+        return None
+
+    session_name = getenv("SESSION_NAME")
+    return request.cookies.get(session_name)
+
 
 if __name__ == "__main__":
     try:
