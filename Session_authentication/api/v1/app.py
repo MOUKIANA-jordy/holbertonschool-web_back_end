@@ -43,27 +43,26 @@ def forbidden(error) -> str:
 @app.before_request
 def before_request():
     """Filter all incoming requests"""
-    print("AUTH TYPE:", type(auth))
     if auth is None:
         return
 
     excluded_paths = [
         "/api/v1/status/",
         "/api/v1/unauthorized/",
-        "/api/v1/forbidden/"
+        "/api/v1/forbidden/",
+        "/api/v1/auth_session/login/"
     ]
 
     if not auth.require_auth(request.path, excluded_paths):
         return
 
-    #  IMPORTANT : 401 si pas de header
-    if auth.authorization_header(request) is None:
+    # NOUVELLE LOGIQUE ICI
+    if (auth.authorization_header(request) is None and
+            auth.session_cookie(request) is None):
         abort(401)
 
-    #  IMPORTANT : assigner user
     request.current_user = auth.current_user(request)
 
-    # IMPORTANT : 403 si user invalide
     if request.current_user is None:
         abort(403)
 
