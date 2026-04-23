@@ -52,18 +52,18 @@ def before_request():
         "/api/v1/forbidden/"
     ]
 
-    # Vérifie si la route nécessite auth
     if not auth.require_auth(request.path, excluded_paths):
         return
 
-    # Vérifie header Authorization
+    #  IMPORTANT : 401 si pas de header
     if auth.authorization_header(request) is None:
         abort(401)
 
+    #  IMPORTANT : assigner user
     request.current_user = auth.current_user(request)
 
-    # Vérifie utilisateur
-    if auth.current_user(request) is None:
+    # IMPORTANT : 403 si user invalide
+    if request.current_user is None:
         abort(403)
 
 
