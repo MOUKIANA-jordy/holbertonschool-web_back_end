@@ -43,6 +43,9 @@ def forbidden(error) -> str:
 @app.before_request
 def before_request():
     """Filter all incoming requests"""
+    
+    print("AUTH TYPE:", type(auth))  
+    
     if auth is None:
         return
 
