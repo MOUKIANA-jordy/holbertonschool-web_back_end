@@ -10,6 +10,7 @@ app = Flask(__name__)
 class Config:
     """Babel configuration"""
     LANGUAGES = ["en", "fr"]
+    BABEL_DEFAULT_LOCALE = "en"
 
 
 app.config.from_object(Config)
