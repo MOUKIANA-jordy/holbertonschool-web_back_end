@@ -104,17 +104,7 @@ def logout():
 
     AUTH.destroy_session(user.id)
 
-    response = make_response(
-        redirect("/")
-    )
-
-    response.set_cookie(
-        "session_id",
-        "",
-        expires=0
-    )
-
-    return response
+    return redirect("/")
 
 
 @app.route(

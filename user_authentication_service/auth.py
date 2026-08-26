@@ -131,7 +131,7 @@ class Auth:
         self,
         email: str
     ) -> str:
-        """Generate a password reset token."""
+        """Generate a reset-password token."""
         try:
             user = self._db.find_user_by(
                 email=email
