@@ -1,80 +1,48 @@
 #!/usr/bin/python3
-""" MRUCache module
-"""
-BaseCaching = __import__('base_caching').BaseCaching
+"""MRU caching module."""
+
+from base_caching import BaseCaching
 
 
 class MRUCache(BaseCaching):
-    """ Caching system MRUCache that inherits from BaseCaching.
-    """
+    """Implement a Most Recently Used caching system."""
 
     def __init__(self):
-        """ Initiliaze
-        """
+        """Initialize the cache and usage order."""
         super().__init__()
-        self.mru_key = None
+        self.usage_order = []
 
     def put(self, key, item):
-        """ Assign to the self.cache_data the item value for the key.
-            If key or item is None, this method should not do anything.
-        """
+        """Add an item using the MRU replacement policy."""
+        if key is None or item is None:
+            return
 
-        if key is not None and item is not None:
-            if (len(self.cache_data) >= BaseCaching.MAX_ITEMS and
-                    key not in self.cache_data):
-                if self.mru_key:
-                    print("DISCARD:", self.mru_key)
-                    del self.cache_data[self.mru_key]
-
+        if key in self.cache_data:
             self.cache_data[key] = item
-            self.mru_key = key
+
+            if key in self.usage_order:
+                self.usage_order.remove(key)
+
+            self.usage_order.append(key)
+            return
+
+        if len(self.cache_data) >= BaseCaching.MAX_ITEMS:
+            most_recent_key = self.usage_order.pop()
+
+            del self.cache_data[most_recent_key]
+            print("DISCARD: {}".format(most_recent_key))
+
+        self.cache_data[key] = item
+        self.usage_order.append(key)
 
     def get(self, key):
-        """ Return the value in self.cache_data linked to key.
-            If key is None or if the key doesn’t exist, return None.
-        """
-        if key in self.cache_data:
-            self.mru_key = key
-            return self.cache_data[key]
-        return None#!/usr/bin/python3
+        """Return an item and mark it as recently used."""
+        if key is None or key not in self.cache_data:
+            return None
 
-        """ MRUCache module
-        """
+        if key in self.usage_order:
+            self.usage_order.remove(key)
 
+        self.usage_order.append(key)
 
-BaseCaching = __import__('base_caching').BaseCaching
-
-
-class MRUCache(BaseCaching):
-    """ Caching system MRUCache that inherits from BaseCaching.
-    """
-
-    def __init__(self):
-        """ Initiliaze
-        """
-        super().__init__()
-      if self.mru_key = None
-
-    def put(self, key, item):
-        """ Assign to the self.cache_data the item value for the key.
-            If key or item is None, this method should not do anything.
-        """
-
-        if key is not None and item is not None:
-            if (len(self.cache_data) >= BaseCaching.MAX_ITEMS and
-                    key not in self.cache_data):
-                if self.mru_key:
-                    print("DISCARD:", self.mru_key)
-                    del self.cache_data[self.mru_key]
-
-            self.cache_data[key] = item
-            self.mru_key = key
-
-    def get(self, key):
-        """ Return the value in self.cache_data linked to key.
-            If key is None or if the key doesn’t exist, return None.
-        """
-        if key in self.cache_data:
-            self.mru_key = key
-            return self.cache_data[key]
-        return None
+        return self.cache_data[key]
