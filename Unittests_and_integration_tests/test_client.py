@@ -33,9 +33,7 @@ class TestGithubOrgClient(unittest.TestCase):
         )
 
         mock_get_json.assert_called_once_with(
-            "https://api.github.com/orgs/{}".format(
-                org_name
-            )
+            "https://api.github.com/orgs/{}".format(org_name)
         )
 
     def test_public_repos_url(self):
@@ -54,7 +52,6 @@ class TestGithubOrgClient(unittest.TestCase):
                 github_client._public_repos_url,
                 expected_url
             )
-
             mock_org.assert_called_once()
 
     @patch("client.get_json")
@@ -88,6 +85,25 @@ class TestGithubOrgClient(unittest.TestCase):
 
             mock_repos_url.assert_called_once()
             mock_get_json.assert_called_once_with(repos_url)
+
+    @parameterized.expand([
+        (
+            {"license": {"key": "my_license"}},
+            "my_license",
+            True,
+        ),
+        (
+            {"license": {"key": "other_license"}},
+            "my_license",
+            False,
+        ),
+    ])
+    def test_has_license(self, repo, license_key, expected):
+        """Test whether a repository has the expected license."""
+        self.assertEqual(
+            GithubOrgClient.has_license(repo, license_key),
+            expected
+        )
 
 
 if __name__ == "__main__":
