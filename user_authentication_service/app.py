@@ -127,7 +127,7 @@ def profile():
 
     return jsonify({
         "email": user.email
-    })
+    }), 200
 
 
 @app.route(
