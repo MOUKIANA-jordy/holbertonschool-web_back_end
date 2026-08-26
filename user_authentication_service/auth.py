@@ -63,30 +63,22 @@ class Auth:
             user = self._db.find_user_by(
                 email=email
             )
+        except NoResultFound:
+            return False
 
-            hashed_password = (
-                user.hashed_password
+        hashed_password = user.hashed_password
+
+        if isinstance(hashed_password, str):
+            hashed_password = hashed_password.encode(
+                "utf-8"
             )
 
-            if isinstance(
-                hashed_password,
-                str
-            ):
-                hashed_password = (
-                    hashed_password.encode(
-                        "utf-8"
-                    )
-                )
-
+        try:
             return bcrypt.checkpw(
                 password.encode("utf-8"),
                 hashed_password
             )
-        except (
-            NoResultFound,
-            TypeError,
-            ValueError
-        ):
+        except (TypeError, ValueError):
             return False
 
     def create_session(
@@ -114,7 +106,7 @@ class Auth:
         self,
         session_id: str
     ) -> Optional[User]:
-        """Return a user from a session ID."""
+        """Return a user matching a session ID."""
         if session_id is None:
             return None
 
@@ -139,7 +131,7 @@ class Auth:
         self,
         email: str
     ) -> str:
-        """Generate a reset-password token."""
+        """Generate a password reset token."""
         try:
             user = self._db.find_user_by(
                 email=email
