@@ -13,9 +13,8 @@ def count_calls(method: Callable) -> Callable:
 
     @wraps(method)
     def wrapper(self, *args, **kwargs):
-        """Increment the counter before calling the method."""
-        key = method.__qualname__
-        self._redis.incr(key)
+        """Increment the counter and execute the method."""
+        self._redis.incr(method.__qualname__)
         return method(self, *args, **kwargs)
 
     return wrapper
@@ -26,19 +25,52 @@ def call_history(method: Callable) -> Callable:
 
     @wraps(method)
     def wrapper(self, *args, **kwargs):
-        """Record inputs, execute the method and record its output."""
+        """Record the inputs and output of one method call."""
         inputs_key = "{}:inputs".format(method.__qualname__)
         outputs_key = "{}:outputs".format(method.__qualname__)
 
         self._redis.rpush(inputs_key, str(args))
-
         output = method(self, *args, **kwargs)
-
         self._redis.rpush(outputs_key, output)
 
         return output
 
     return wrapper
+
+
+def replay(method: Callable) -> None:
+    """Display the call history of a decorated method."""
+    redis_client = method.__self__._redis
+    method_name = method.__qualname__
+
+    count = redis_client.get(method_name)
+    call_count = int(count) if count is not None else 0
+
+    print("{} was called {} times:".format(
+        method_name,
+        call_count,
+    ))
+
+    inputs = redis_client.lrange(
+        "{}:inputs".format(method_name),
+        0,
+        -1,
+    )
+    outputs = redis_client.lrange(
+        "{}:outputs".format(method_name),
+        0,
+        -1,
+    )
+
+    for input_data, output_data in zip(inputs, outputs):
+        decoded_input = input_data.decode("utf-8")
+        decoded_output = output_data.decode("utf-8")
+
+        print("{}(*{}) -> {}".format(
+            method_name,
+            decoded_input,
+            decoded_output,
+        ))
 
 
 class Cache:
@@ -62,7 +94,7 @@ class Cache:
         key: str,
         fn: Optional[Callable] = None,
     ):
-        """Retrieve data and optionally convert it using a callable."""
+        """Retrieve data and optionally convert it."""
         data = self._redis.get(key)
 
         if data is None:
