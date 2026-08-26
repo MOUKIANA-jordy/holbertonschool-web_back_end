@@ -1,43 +1,46 @@
 #!/usr/bin/env python3
+"""Unit tests for the Github organization client."""
+
 import unittest
-from unittest.mock import patch, PropertyMock
+from unittest.mock import patch
+
+from parameterized import parameterized
+
 from client import GithubOrgClient
 
 
 class TestGithubOrgClient(unittest.TestCase):
-    """Tests unitaires pour GithubOrgClient.public_repos"""
+    """Test the GithubOrgClient class."""
 
-    @patch('client.get_json')
-    def test_public_repos(self, mock_get_json):
-        """Tester que public_repos renvoie la bonne liste de dépôts"""
+    @parameterized.expand([
+        ("google",),
+        ("abc",),
+    ])
+    @patch("client.get_json")
+    def test_org(self, org_name, mock_get_json):
+        """Test that org returns the expected payload."""
+        expected_payload = {
+            "login": org_name,
+            "repos_url": (
+                "https://api.github.com/orgs/"
+                "{}/repos".format(org_name)
+            ),
+        }
 
-        # Faux payload simulant la réponse de l’API
-        payload_faux = [
-            {"name": "repo1"},
-            {"name": "repo2"},
-            {"name": "repo3"},
-        ]
-        mock_get_json.return_value = payload_faux
+        mock_get_json.return_value = expected_payload
 
-        # Patch de la propriété _public_repos_url
-        with patch(
-            "client.GithubOrgClient._public_repos_url",
-            new_callable=PropertyMock,
-        ) as mock_repos_url:
-            mock_repos_url.return_value = "http://faux-url.com"
+        github_client = GithubOrgClient(org_name)
 
-            client = GithubOrgClient("test_org")
-            resultat = client.public_repos()
+        self.assertEqual(
+            github_client.org,
+            expected_payload
+        )
 
-            # On vérifie que la liste renvoyée est correcte
-            attendu = ["repo1", "repo2", "repo3"]
-            self.assertEqual(resultat, attendu)
-
-            # Vérifie que get_json a été appelé une seule fois
-            mock_get_json.assert_called_once_with("http://faux-url.com")
-
-            # Vérifie que la propriété a été utilisée une seule fois
-            mock_repos_url.assert_called_once()
+        mock_get_json.assert_called_once_with(
+            "https://api.github.com/orgs/{}".format(
+                org_name
+            )
+        )
 
 
 if __name__ == "__main__":
